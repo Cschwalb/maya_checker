@@ -1,6 +1,8 @@
 ##Written by Caleb Schwalb to detect if Maya went down##
 ## if down, send email, else detect##
 ## June 14 2022
+
+##edited by caleb schwalb 9/25/2023
 import psutil
 import time
 import smtplib
@@ -15,8 +17,13 @@ def checkIfProcessRunning(processName):
                 return True # we found it
         except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
             pass
-    return False;
+    return False
 
+def parseGet(sFilename):
+    file = open(sFilename, "r")
+    toreturn = file.readline()
+    file.close()
+    return toreturn
 
 def mail():
     body = 'Subject:  Maya is down!'
@@ -27,7 +34,9 @@ def mail():
         smtpObj = smtplib.SMTP_SSL('smtp-mail.outlook.com', 465)
     smtpObj.ehlo()
     smtpObj.starttls()
-    smtpObj.login('maya_is_down@outlook.com', "testing123")
+    usn = parseGet("username.txt")
+    pw = parseGet("password.txt")
+    smtpObj.login(usn, pw)
     smtpObj.sendmail('maya_is_down@outlook.com', 'calebschwalb@gmail.com', body)
 
 
